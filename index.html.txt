@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="main-html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 فوركس سوق العملات الأجنبية | طيكيل 😈 ملك ملوك الجان</title>
+    
+    <!-- الخطوط والمكتبات الخارجية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- بيانات الميتا والـ SEO -->
+    <meta name="description" content="بوابة طيكيل للفوركس وسوق العملات الأجنبية - التحليلات الذكية برعاية مستشار المحقق نادر بكار الماورائي.">
+    <meta name="keywords" content="فوركس, سوق العملات, بوت تلجرام, ذكاء اصطناعي, طيكيل, المحقق نادر بكار">
+    <meta name="author" content="ESO Company, إسلام الهاشمي">
+    
+    <!-- استدعاء ملف التنسيقات الموحد -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- الهيدر العلوي: الشعار، التسجيل وزر تحويل اللغة -->
+<header>
+    <div class="logo">FX TK04</div>
+    <div class="auth-header-actions" id="auth-actions">
+        <!-- يظهر هذا الكارت في حالة عدم تسجّيل الدخول -->
+        <button class="auth-btn google-btn" onclick="loginWithGoogle()"><i class="fab fa-google"></i> دخول بجوجل</button>
+        <button class="auth-btn phone-btn" onclick="openPhoneModal()"><i class="fas fa-phone-alt"></i> رقم الهاتف</button>
+        <!-- يظهر هذا الكارت بعد تسجّيل الدخول -->
+        <div id="user-profile-badge" class="user-badge" style="display: none;">
+            <span id="user-display-name">مرحباً بك</span>
+            <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> خروج</button>
+        </div>
+    </div>
+    <button class="lang-btn" onclick="toggleLanguage()" id="lang-btn">English</button>
+</header>
+
+<!-- شريط أسعار العملات الفوري -->
+<div style="width: 100%; background-color: #0b0c10;">
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {
+    "symbols": [
+      {"proName": "FX_IDC:EURUSD", "title": "EUR/USD"},
+      {"proName": "FX_IDC:GBPUSD", "title": "GBP/USD"},
+      {"proName": "FX_IDC:USDJPY", "title": "USD/JPY"},
+      {"proName": "FX:XAUUSD", "title": "GOLD / USD"},
+      {"proName": "FX_IDC:AUDUSD", "title": "AUD/USD"}
+    ],
+    "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "ar"
+    }
+    </script>
+  </div>
+</div>
+
+<!-- واجهة الهيرو الترحيبية -->
+<section id="hero">
+  <div class="hero-content">
+    <h1 class="hero-title" id="h-title">
+      <span class="hero-magic">$</span> موقع الفوركس وسوق العملات الأجنبية [FX TK04] <span class="hero-magic">$</span>
+    </h1>
+    <p class="hero-sub" id="h-sub">مملكة طيكيل | تحليلات فوركس + قمر فلكي + مجاني بحدود</p>
+    
+    <div class="hero-buttons-container">
+        <a href="https://t.me/TK04chat_bot?start" target="_blank" id="hero-telegram-btn">
+            <i class="fab fa-telegram"></i> <span id="btn-text">استدعي طيكيل على تلجرام الآن</span>
+        </a>
+        <a href="https://t.me/Tk07ForexESOweb" target="_blank" id="hero-channel-btn">
+            <i class="fas fa-bullhorn"></i> <span id="channel-btn-text">قناة توصيات طيكيل الحية</span>
+        </a>
+    </div>
+</div>
+</section>
+
+<!-- لوحة التحكم الأولى: الرصد الفلكي والاقتران المالي -->
+<div class="live-dashboard">
+    <div class="dashboard-card moon-status">
+        <h3 id="moon-card-title">🪐 الرصد الفلكي والتقويم الرقمي</h3>
+        <div class="date-display" id="numeric-date">اليوم: --</div>
+        <div id="moon-calendar" class="moon-calendar"></div>
+         
+        <div class="moon-graphic-container">
+            <div class="moon-light" id="moon-render"></div>
+            <div class="moon-shadow" id="shadow-render"></div>
+        </div>
+         
+        <p id="moon-phase-text">جاري حساب حركة ومظهر القمر الفلكي المالي...</p>
+        <div class="liquidity-badge" id="liquidity-val">جاري الحساب...</div>
+    </div>
+     
+    <div class="dashboard-card">
+        <h3 id="wheel-card-title">🎡 عجلة الاقتران الفلكي المالي</h3>
+        <p style="font-size:0.85rem; color:#a4b3b6;" id="wheel-card-sub">حرك العجلة لرصد اقتران الكواكب والشمس مع مسار السيولة</p>
+         
+        <div class="cosmic-wheel" id="planetary-wheel">
+            <div class="center-earth"><i class="fas fa-globe" style="font-size:0.8rem; margin:7px;"></i></div>
+            <div class="orbit-object" id="cosmic-sun"><i class="fas fa-sun"></i></div>
+            <div class="orbit-object" id="cosmic-moon"><i class="fas fa-moon"></i></div>
+            <div class="orbit-object" id="cosmic-mars"><i class="fas fa-bolt"></i></div>
+            <div class="orbit-object" id="cosmic-jupiter"><i class="fas fa-coins"></i></div>
+        </div>
+         
+        <input type="range" min="1" max="365" value="150" class="wheel-slider" id="time-slider" oninput="updateCosmicWheel(this.value)">
+        <div style="font-size: 0.9rem; color: var(--neon-blue);" id="alignment-status">اقتران مالي متوازن</div>
+    </div>
+</div>
+
+<!-- لوحة التحكم الثانية: الشارت والأجندة الإخبارية -->
+<div class="live-dashboard" style="padding-top:0;">
+    <div class="dashboard-card" style="display:block;">
+        <div class="tradingview-widget-container" style="height:350px;">
+          <div id="tradingview_chart"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+          <script type="text/javascript">
+          new TradingView.widget({
+            "width": "100%", "height": 350, "symbol": "FX:EURUSD", "interval": "H1",
+            "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "ar",
+            "toolbar_bg": "#f1f3f6", "enable_publishing": false, "hide_side_toolbar": true,
+            "allow_symbol_change": true, "container_id": "tradingview_chart"
+          });
+          </script>
+        </div>
+    </div>
+     
+    <div class="dashboard-card" style="display:block; overflow:hidden;">
+      <h3 style="margin-top:0; margin-bottom:10px;" id="news-title">📰 مفكرة طيكيل للأخبار الحمراء المؤثرة</h3>
+      <div class="tradingview-widget-container" style="height:300px;">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-economic-calendar.js" async>
+        {
+          "colorTheme": "dark", "isTransparent": true, "width": "100%", "height": "100%", "locale": "ar",
+          "importanceFilter": "1" 
+        }
+        </script>
+      </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 🔥 [جديد] المنتدى التفاعلي: منتدى ملك ملوك الجان لنشر التوصيات -->
+<!-- ============================================================ -->
+<section class="forum-section" id="forum-container">
+    <div class="forum-header">
+        <h2>😈 منتدى ملك ملوك الجان للتوصيات المباشرة</h2>
+        <p>مساحة خاصة بأعضاء المنصة لمتابعة ونشر أحدث التوصيات والتحليلات الحية.</p>
+    </div>
+
+    <!-- كارت الدعوة للتسجيل (يظهر فقط للزوار غير المسجلين) -->
+    <div id="guest-forum-notice" class="guest-notice-card">
+        <i class="fas fa-lock lock-icon"></i>
+        <h3>أنت متصفح الآن في وضع الزائر</h3>
+        <p>يمكنك التصفح العام ورؤية الأسعار الخفيفة. لمراجعة **تاريخ التوصيات كاملة** أو **نشر توصيات جديدة** يرجى تسجيل الدخول مجاناً عبر جوجل أو رقم الهاتف.</p>
+        <button class="action-btn" onclick="loginWithGoogle()"><i class="fab fa-google"></i> تسجيل الدخول فوراً</button>
+    </div>
+
+    <!-- صندوق النشر للتوصية (يظهر فقط للـ المسجلين) -->
+    <div id="logged-publish-box" class="publish-box" style="display: none;">
+        <h3><i class="fas fa-edit"></i> إضافة توصية / تحليل جديد</h3>
+        <form id="post-recommendation-form" onsubmit="submitNewPost(event)">
+            <textarea id="post-text" placeholder="اكتب تحليلك أو التوصية هنا (مثال: EUR/USD شراء من مستويات 1.0850...)" required></textarea>
+            
+            <div class="file-upload-wrapper">
+                <label for="post-image" class="file-label">
+                    <i class="fas fa-image"></i> إرفاق صورة تحليليّة واحدة فقط (PNG / JPG / WEBP)
+                </label>
+                <input type="file" id="post-image" accept="image/png, image/jpeg, image/webp" onchange="previewSelectedImage(event)">
+                <div id="image-preview" class="image-preview-container"></div>
+            </div>
+
+            <button type="submit" class="submit-post-btn"><i class="fas fa-paper-plane"></i> نشر التوصية الآن</button>
+        </form>
+    </div>
+
+    <!-- قائمة التوصيات المنشورة (سجل التوصيات) -->
+    <div id="forum-posts-list" class="posts-list" style="display: none;">
+        <!-- هنا سيتم استدعاء التوصيات المنشورة بواسطة JavaScript -->
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 👑 [جديد] لوحة تحكم زوار الوطن العربي (خاصة بالأدمن فقط) -->
+<!-- ============================================================ -->
+<section id="admin-analytics-dashboard" class="admin-dashboard-section" style="display: none;">
+    <div class="admin-header">
+        <h2>📊 لوحة تحكم زوار المنصة (الوطن العربي) - خاس بالأدمن</h2>
+        <span class="admin-badge"><i class="fas fa-crown"></i> مالك المنصة: eslamhamadi779@gmail.com</span>
+    </div>
+    <div class="grid-3 analytics-cards">
+        <div class="stat-card">
+            <h4>إجمالي الزوار العرب</h4>
+            <div class="stat-value" id="total-arabic-visitors">--</div>
+        </div>
+        <div class="stat-card">
+            <h4>أبرز البلدان المتابعة</h4>
+            <div class="stat-value" id="top-countries">مصر, السعودية, الإمارات</div>
+        </div>
+        <div class="stat-card">
+            <h4>تسجيلات الدخول اليوم</h4>
+            <div class="stat-value" id="today-logins">--</div>
+        </div>
+    </div>
+</section>
+
+<!-- قسم التنويهات والمميزات -->
+<section class="why-TK04">
+  <h2 id="why-title">😈 لماذا منصة TK04 مختلفة؟</h2>
+  <div class="grid-3">
+      <div>
+        <h3 id="feat1-t">😈 وصول حقيقي للمحتوى</h3>
+        <p id="feat1-d">ما يهمنا هو ثقة العميل وليس الربح، نبحث عن احتياج العميل ونعرف يأسه وتخبطه ما بين أخبار كاذبة ومتداولين غير جديرين بالثقة.</p>
+      </div>
+      <div>
+        <h3 id="feat2-t">😈 مع طيكيل TK04 ملك ملوك الجان</h3>
+        <p id="feat2-d">ليس ذكاءً اصطناعياً، فهو ملك ملوك الجان السحري وبطل روايات وأسطورة مختلفة في الحديث معه.</p>
+      </div>
+      <div>
+        <h3 id="feat3-t">😈 بيئة آمنة</h3>
+        <p id="feat3-d">يتم استخدام أنظمة ذكية وتقارير دقيقة:</p>
+        <ul id="feat3-list">
+          <li>لا تضع البيض في سلة واحدة</li>
+          <li>لا تخاطر بمالك كله</li>
+          <li>استثمر 3% من مالك لضمان الاستمرارية</li>
+          <li>طيكيل يعطي توصيات ربما أصاب وربما أخطأ</li>
+        </ul>
+      </div>
+  </div>
+  <div style="margin-top:20px; border-left: 4px solid var(--danger-red); padding-left:15px;">
+     <h3 style="color:var(--danger-red);" id="warn-t">⚠️ منصة تجريبية مجانية والموارد محدودة</h3>
+     <p id="warn-d">تنويه: المنصة غير مسؤولة عن مخاطرتك، وتأكد من السعر الحقيقي للسوق لتجنب الخسارة.</p>
+  </div>
+</section>
+
+<!-- قسم الخوارزميات العادلة -->
+<div class="fair-algorithm">
+  <h3 id="rec-title">توصيات وتحليلات</h3>
+  <p id="rec-d1">توصيات وتحليلات من قلب السوق إليك بالمجان.</p>
+  <p id="rec-d2">طيكيل ملك ملوك الجان يملك حدوداً للاستخدام فهو مجاني 100%.</p>
+</div>
+
+<!-- التحديثات القادمة -->
+<section class="coming-soon">
+<h2 id="soon-title">قريبًا مع TK04</h2>
+<p id="soon-sub">دردشة حية 24/7 مع ملك ملوك الجان TK04</p>
+<div class="grid-3">
+    <div class="gift-card">
+        <span id="g1-t">توصيات يومية وأسبوعية وشهرية</span>
+        <p style="color:var(--text-gold);" class="soon-lbl">قريبًا</p>
+    </div>
+    <div class="gift-card">
+        <span id="g2-t">تحليلات وشرح للأخبار</span>
+        <p style="color:var(--text-gold);" class="soon-lbl">قريبًا</p>
+    </div>
+    <div class="gift-card">
+        <span id="g3-t">تحليل فلكي ورقمي</span>
+        <p style="color:var(--text-gold);" class="soon-lbl">قريبًا</p>
+    </div>
+</div>
+</section>
+
+<!-- تذييل الصفحة -->
+<footer>
+   <div class="footer-symbols">£€$, A$,⏳⌛💸💵💶💴🪙💰💳🪙💎 AU$$</div>
+    <div class="footer-links">
+        <a href="https://www.facebook.com/share/1DbMWGbpCw/" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="https://www.noor-book.com/u/Eslam-Hamadi-Hashimi/books" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i> Noor Book</a>
+        <a href="https://www.tiktok.com/@eslamhamadi5" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i> TikTok</a>
+        <a href="https://www.ktobati.com/book/%D9%83%D8%AA%D8%A7%D8%A8-%D9%82%D8%B5%D8%B5-%D9%82%D8%B5%D9%8A%D8%B1%D8%A9-0" target="_blank" rel="noopener noreferrer"><i class="fas fa-feather-alt"></i> Ktobati</a>
+        <a href="https://github.com/eslamhamadi779-sys" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a>
+        <a href="https://eslamhamadi779-sys.github.io/Heba-fitness-style/" target="_blank" rel="noopener noreferrer"><i class="fas fa-dumbbell"></i> Heba Fitness</a>
+        <a href="https://eslamhamadi779-sys.github.io/Moon-Gate/" target="_blank" rel="noopener noreferrer"><i class="fas fa-moon"></i> MoonGate</a>
+        <a href="https://eslamhamadi779-sys.github.io/Rihla-by-ESO.Version1/" target="_blank" rel="noopener noreferrer"><i class="fas fa-map-marked-alt"></i> Rihla</a>
+    </div>
+    <p id="footer-cr">إسلام الهاشمي © جميع الحقوق محفوظة 2026 | ESO 🚀</p>
+</footer>
+
+<!-- ============================================================ -->
+<!-- 📱 [جديد] نافذة تسجيل الدخول برقم الهاتف (Modal) -->
+<!-- ============================================================ -->
+<div id="phone-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closePhoneModal()">&times;</span>
+        <h3><i class="fas fa-mobile-alt"></i> تسجيل الدخول برقم الهاتف</h3>
+        <p>أدخل رقم هاتفك لتأكيد الهوية والاستفادة من كامل مميزات الموقع مجاناً</p>
+        <form id="phone-login-form" onsubmit="handlePhoneSubmit(event)">
+            <div class="input-group">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="user-phone-input" placeholder="مثال: 01277784509" required pattern="[0-9+ ]{8,15}">
+            </div>
+            <button type="submit" class="auth-submit-btn">تأكيد ودخول</button>
+        </form>
+    </div>
+</div>
+
+<!-- ربط ملفات الجافا سكريبت -->
+<script src="script.js"></script>
+
+</body>
+</html>
