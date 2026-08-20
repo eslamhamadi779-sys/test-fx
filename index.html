@@ -5,18 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔥 فوركس سوق العملات الأجنبية | طيكيل 😈 ملك ملوك الجان</title>
-    
+
     <!-- الخطوط والمكتبات الخارجية -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- بيانات الميتا والـ SEO -->
     <meta name="description" content="بوابة طيكيل للفوركس وسوق العملات الأجنبية - التحليلات الذكية برعاية مستشار المحقق نادر بكار الماورائي.">
     <meta name="keywords" content="فوركس, سوق العملات, بوت تلجرام, ذكاء اصطناعي, طيكيل, المحقق نادر بكار">
     <meta name="author" content="ESO Company, إسلام الهاشمي">
-    
+
     <!-- استدعاء ملف التنسيقات الموحد -->
     <link rel="stylesheet" href="style.css">
+
+    <!--
+        🔑 [Supabase] — لتفعيل الاتصال الحقيقي بقاعدة البيانات والمصادقة:
+        1) فك التعليق عن السطر التالي.
+        2) حط رابط ومفتاح مشروعك في أول ملف script.js (SUPABASE_URL / SUPABASE_ANON_KEY).
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    -->
 </head>
 <body>
 
@@ -27,11 +34,6 @@
         <!-- يظهر هذا الكارت في حالة عدم تسجّيل الدخول -->
         <button class="auth-btn google-btn" onclick="loginWithGoogle()"><i class="fab fa-google"></i> دخول بجوجل</button>
         <button class="auth-btn phone-btn" onclick="openPhoneModal()"><i class="fas fa-phone-alt"></i> رقم الهاتف</button>
-        <!-- يظهر هذا الكارت بعد تسجّيل الدخول -->
-        <div id="user-profile-badge" class="user-badge" style="display: none;">
-            <span id="user-display-name">مرحباً بك</span>
-            <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> خروج</button>
-        </div>
     </div>
     <button class="lang-btn" onclick="toggleLanguage()" id="lang-btn">English</button>
 </header>
@@ -62,13 +64,16 @@
       <span class="hero-magic">$</span> موقع الفوركس وسوق العملات الأجنبية [FX TK04] <span class="hero-magic">$</span>
     </h1>
     <p class="hero-sub" id="h-sub">مملكة طيكيل | تحليلات فوركس + قمر فلكي + مجاني بحدود</p>
-    
+
     <div class="hero-buttons-container">
         <a href="https://t.me/TK04chat_bot?start" target="_blank" id="hero-telegram-btn">
             <i class="fab fa-telegram"></i> <span id="btn-text">استدعي طيكيل على تلجرام الآن</span>
         </a>
         <a href="https://t.me/Tk07ForexESOweb" target="_blank" id="hero-channel-btn">
             <i class="fas fa-bullhorn"></i> <span id="channel-btn-text">قناة توصيات طيكيل الحية</span>
+        </a>
+        <a href="https://t.me/Tikil07_bot" target="_blank" id="hero-tk07-btn">
+            <i class="fab fa-telegram"></i> <span id="tk07-btn-text">بوت طيكيل Tk07</span>
         </a>
     </div>
 </div>
@@ -80,20 +85,20 @@
         <h3 id="moon-card-title">🪐 الرصد الفلكي والتقويم الرقمي</h3>
         <div class="date-display" id="numeric-date">اليوم: --</div>
         <div id="moon-calendar" class="moon-calendar"></div>
-         
+
         <div class="moon-graphic-container">
             <div class="moon-light" id="moon-render"></div>
             <div class="moon-shadow" id="shadow-render"></div>
         </div>
-         
+
         <p id="moon-phase-text">جاري حساب حركة ومظهر القمر الفلكي المالي...</p>
         <div class="liquidity-badge" id="liquidity-val">جاري الحساب...</div>
     </div>
-     
+
     <div class="dashboard-card">
         <h3 id="wheel-card-title">🎡 عجلة الاقتران الفلكي المالي</h3>
         <p style="font-size:0.85rem; color:#a4b3b6;" id="wheel-card-sub">حرك العجلة لرصد اقتران الكواكب والشمس مع مسار السيولة</p>
-         
+
         <div class="cosmic-wheel" id="planetary-wheel">
             <div class="center-earth"><i class="fas fa-globe" style="font-size:0.8rem; margin:7px;"></i></div>
             <div class="orbit-object" id="cosmic-sun"><i class="fas fa-sun"></i></div>
@@ -101,7 +106,7 @@
             <div class="orbit-object" id="cosmic-mars"><i class="fas fa-bolt"></i></div>
             <div class="orbit-object" id="cosmic-jupiter"><i class="fas fa-coins"></i></div>
         </div>
-         
+
         <input type="range" min="1" max="365" value="150" class="wheel-slider" id="time-slider" oninput="updateCosmicWheel(this.value)">
         <div style="font-size: 0.9rem; color: var(--neon-blue);" id="alignment-status">اقتران مالي متوازن</div>
     </div>
@@ -123,7 +128,7 @@
           </script>
         </div>
     </div>
-     
+
     <div class="dashboard-card" style="display:block; overflow:hidden;">
       <h3 style="margin-top:0; margin-bottom:10px;" id="news-title">📰 مفكرة طيكيل للأخبار الحمراء المؤثرة</h3>
       <div class="tradingview-widget-container" style="height:300px;">
@@ -131,7 +136,7 @@
         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-economic-calendar.js" async>
         {
           "colorTheme": "dark", "isTransparent": true, "width": "100%", "height": "100%", "locale": "ar",
-          "importanceFilter": "1" 
+          "importanceFilter": "1"
         }
         </script>
       </div>
@@ -139,11 +144,11 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- 🔥 [جديد] المنتدى التفاعلي: منتدى ملك ملوك الجان لنشر التوصيات -->
+<!-- 🔥 المنتدى التفاعلي: منتدى ملك ملوك الجان لنشر التوصيات -->
 <!-- ============================================================ -->
 <section class="forum-section" id="forum-container">
     <div class="forum-header">
-        <h2>😈 منتدى ملك ملوك الجان للتوصيات المباشرة</h2>
+        <h2 id="forum-section-title">😈 منتدى ملك ملوك الجان للتوصيات المباشرة</h2>
         <p>مساحة خاصة بأعضاء المنصة لمتابعة ونشر أحدث التوصيات والتحليلات الحية.</p>
     </div>
 
@@ -151,7 +156,7 @@
     <div id="guest-forum-notice" class="guest-notice-card">
         <i class="fas fa-lock lock-icon"></i>
         <h3>أنت متصفح الآن في وضع الزائر</h3>
-        <p>يمكنك التصفح العام ورؤية الأسعار الخفيفة. لمراجعة **تاريخ التوصيات كاملة** أو **نشر توصيات جديدة** يرجى تسجيل الدخول مجاناً عبر جوجل أو رقم الهاتف.</p>
+        <p>يمكنك التصفح العام ورؤية الأسعار الخفيفة. لمراجعة تاريخ التوصيات كاملة أو نشر توصيات جديدة يرجى تسجيل الدخول مجاناً عبر جوجل أو رقم الهاتف.</p>
         <button class="action-btn" onclick="loginWithGoogle()"><i class="fab fa-google"></i> تسجيل الدخول فوراً</button>
     </div>
 
@@ -160,7 +165,7 @@
         <h3><i class="fas fa-edit"></i> إضافة توصية / تحليل جديد</h3>
         <form id="post-recommendation-form" onsubmit="submitNewPost(event)">
             <textarea id="post-text" placeholder="اكتب تحليلك أو التوصية هنا (مثال: EUR/USD شراء من مستويات 1.0850...)" required></textarea>
-            
+
             <div class="file-upload-wrapper">
                 <label for="post-image" class="file-label">
                     <i class="fas fa-image"></i> إرفاق صورة تحليليّة واحدة فقط (PNG / JPG / WEBP)
@@ -174,18 +179,16 @@
     </div>
 
     <!-- قائمة التوصيات المنشورة (سجل التوصيات) -->
-    <div id="forum-posts-list" class="posts-list" style="display: none;">
-        <!-- هنا سيتم استدعاء التوصيات المنشورة بواسطة JavaScript -->
-    </div>
+    <div id="forum-posts-list" class="posts-list"></div>
 </section>
 
 <!-- ============================================================ -->
-<!-- 👑 [جديد] لوحة تحكم زوار الوطن العربي (خاصة بالأدمن فقط) -->
+<!-- 👑 لوحة تحكم زوار الوطن العربي (خاصة بالأدمن فقط) -->
 <!-- ============================================================ -->
 <section id="admin-analytics-dashboard" class="admin-dashboard-section" style="display: none;">
     <div class="admin-header">
-        <h2>📊 لوحة تحكم زوار المنصة (الوطن العربي) - خاس بالأدمن</h2>
-        <span class="admin-badge"><i class="fas fa-crown"></i> مالك المنصة: eslamhamadi779@gmail.com</span>
+        <h2 id="admin-dash-title">📊 لوحة تحكم زوار المنصة (الوطن العربي) - خاص بالأدمن</h2>
+        <span class="admin-badge"><i class="fas fa-crown"></i> مالك المنصة</span>
     </div>
     <div class="grid-3 analytics-cards">
         <div class="stat-card">
@@ -228,7 +231,7 @@
   </div>
   <div style="margin-top:20px; border-left: 4px solid var(--danger-red); padding-left:15px;">
      <h3 style="color:var(--danger-red);" id="warn-t">⚠️ منصة تجريبية مجانية والموارد محدودة</h3>
-     <p id="warn-d">تنويه: المنصة غير مسؤولة عن مخاطرتك، وتأكد من السعر الحقيقي للسوق لتجنب الخسارة.</p>
+     <p id="warn-d">تنويه: المنصة غير مسؤولة عن مخاطرتك، وتأكد من السعر الحقيقي للسوق لتجنب الخسارة. التحليل الفلكي المعروض هو محتوى ترفيهي ولا يُعد نصيحة مالية.</p>
   </div>
 </section>
 
@@ -262,6 +265,14 @@
 <!-- تذييل الصفحة -->
 <footer>
    <div class="footer-symbols">£€$, A$,⏳⌛💸💵💶💴🪙💰💳🪙💎 AU$$</div>
+
+   <div class="footer-support">
+       <p id="support-line">للشكاوى والمقترحات تواصل معنا على بوت الدعم:</p>
+       <a href="https://t.me/ESOHAM_bot" target="_blank" rel="noopener noreferrer" class="support-bot-link">
+           <i class="fab fa-telegram"></i> @ESOHAM_bot
+       </a>
+   </div>
+
     <div class="footer-links">
         <a href="https://www.facebook.com/share/1DbMWGbpCw/" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i> Facebook</a>
         <a href="https://www.noor-book.com/u/Eslam-Hamadi-Hashimi/books" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i> Noor Book</a>
@@ -271,12 +282,13 @@
         <a href="https://eslamhamadi779-sys.github.io/Heba-fitness-style/" target="_blank" rel="noopener noreferrer"><i class="fas fa-dumbbell"></i> Heba Fitness</a>
         <a href="https://eslamhamadi779-sys.github.io/Moon-Gate/" target="_blank" rel="noopener noreferrer"><i class="fas fa-moon"></i> MoonGate</a>
         <a href="https://eslamhamadi779-sys.github.io/Rihla-by-ESO.Version1/" target="_blank" rel="noopener noreferrer"><i class="fas fa-map-marked-alt"></i> Rihla</a>
+        <a href="https://t.me/ESOwebHAM" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i> ESO Code</a>
     </div>
     <p id="footer-cr">إسلام الهاشمي © جميع الحقوق محفوظة 2026 | ESO 🚀</p>
 </footer>
 
 <!-- ============================================================ -->
-<!-- 📱 [جديد] نافذة تسجيل الدخول برقم الهاتف (Modal) -->
+<!-- 📱 نافذة تسجيل الدخول برقم الهاتف (Modal) -->
 <!-- ============================================================ -->
 <div id="phone-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
