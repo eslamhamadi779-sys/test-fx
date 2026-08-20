@@ -1,50 +1,52 @@
 
 /* ============================================================
+   🔑 [Supabase] إعدادات الاتصال بقاعدة البيانات والمصادقة
+   حط بيانات مشروعك هنا، وفكّ تعليق سطر supabase-js في index.html
+   ============================================================ */
+const SUPABASE_URL = "";       // مثال: https://xxxxxxxx.supabase.co
+const SUPABASE_ANON_KEY = "";  // مفتاح anon/public من إعدادات المشروع
+
+let supabaseClient = null;
+if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+/* ============================================================
    # [AR] مصفوفة البيانات والترجمة الشاملة لجميع اللغات والواجهات
    # [EN] Complete Multi-Language i18n & Interface Translation Dictionary
    ============================================================ */
 const data = {
     ar: {
-        title: "موقع الفوركس وسوق العملات الأجنبية [FX TK04] $", 
-        sub: "مملكة طيكيل | تحليلات فوركس + قمر فلكي + مجاني بحدود", 
+        title: "موقع الفوركس وسوق العملات الأجنبية [FX TK04] $",
+        sub: "مملكة طيكيل | تحليلات فوركس + قمر فلكي + مجاني بحدود",
         btn: "استدعي طيكيل على تلجرام الآن",
-        m_title: "🪐 الرصد الفلكي والتقويم الرقمي", 
+        m_title: "🪐 الرصد الفلكي والتقويم الرقمي",
         news_title: "📰 مفكرة طيكيل للأخبار الحمراء المؤثرة",
-        wheel_t: "🎡 عجلة الاقتران الفلكي المالي", 
+        wheel_t: "🎡 عجلة الاقتران الفلكي المالي",
         wheel_s: "حرك العجلة لرصد اقتران الكواكب والشمس مع مسار السيولة",
-        why_t: "😈 لماذا منصة TK04 مختلفة؟", 
-        f1_t: "😈 وصول حقيقي للمحتوى", 
+        why_t: "😈 لماذا منصة TK04 مختلفة؟",
+        f1_t: "😈 وصول حقيقي للمحتوى",
         f1_d: "ما يهمنا هو ثقة العميل وليس الربح، نبحث عن احتياج العميل ونعرف يأسه وتخبطه ما بين أخبار كاذبة ومتداولين غير جديرين بالثقة.",
-        f2_t: "😈 مع طيكيل TK04 ملك ملوك الجان", 
+        f2_t: "😈 مع طيكيل TK04 ملك ملوك الجان",
         f2_d: "ليس ذكاءً اصطناعياً، فهو ملك ملوك الجان السحري وبطل روايات وأسطورة مختلفة في الحديث معه.",
-        f3_t: "😈 بيئة آمنة", 
+        f3_t: "😈 بيئة آمنة",
         f3_d: "يتم استخدام أنظمة ذكية وتقارير دقيقة:",
         f3_l: "<li>لا تضع البيض في سلة واحدة</li><li>لا تخاطر بمالك كله</li><li>استثمر 3% من مالك لضمان الاستمرارية</li><li>طيكيل يعطي توصيات ربما أصاب وربما أخطأ</li>",
-        warn_t: "⚠️ منصة تجريبية مجانية والموارد محدودة", 
-        warn_d: "تنويه: المنصة غير مسؤولة عن مخاطرتك، وتأكد من السعر الحقيقي للسوق لتجنب الخسارة.",
-        rec_t: "توصيات وتحليلات", 
-        rec_d1: "توصيات وتحليلات من قلب السوق إليك بالمجان.", 
+        warn_t: "⚠️ منصة تجريبية مجانية والموارد محدودة",
+        warn_d: "تنويه: المنصة غير مسؤولة عن مخاطرتك، وتأكد من السعر الحقيقي للسوق لتجنب الخسارة. التحليل الفلكي المعروض هو محتوى ترفيهي ولا يُعد نصيحة مالية.",
+        rec_t: "توصيات وتحليلات",
+        rec_d1: "توصيات وتحليلات من قلب السوق إليك بالمجان.",
         rec_d2: "طيكيل ملك ملوك الجان يملك حدوداً للاستخدام فهو مجاني 100%.",
-        soon_t: "قريبًا مع TK04", 
-        soon_s: "دردشة حية 24/7 مع ملك ملوك الجان TK04", 
+        soon_t: "قريبًا مع TK04",
+        soon_s: "دردشة حية 24/7 مع ملك ملوك الجان TK04",
         lbl: "قريباً",
-        g1: "توصيات يومية وأسبوعية وشهرية", 
-        g2: "تحليلات وشرح للأخبار", 
+        g1: "توصيات يومية وأسبوعية وشهرية",
+        g2: "تحليلات وشرح للأخبار",
         g3: "تحليل فلكي ورقمي",
         cr: "إسلام الهاشمي © جميع الحقوق محفوظة 2026 | ESO 🚀",
-        forum_title: "🔥 منتدى ملك ملوك الجان للتوصيات الحية",
-        guest_notice_h: "المحتوى مشفر للزوار والمستكشفين!",
-        guest_notice_p: "يرجى تسجيل الدخول برقم الهاتف أو حساب جوجل لتتمكن من مشاركة توصياتك وقراءة التحليلات الحية.",
-        publish_h: "✍️ انشر توصية أو تحليل جديد للمملكة",
-        placeholder_post: "اكتب تحليلك أو توصيتك هنا (مثال: EUR/USD شراء من مستويات 1.0850)...",
-        upload_img_btn: "📷 إرفاق صورة الشارت / التحليل",
-        submit_post: "🚀 نشر التوصية الآن",
-        admin_dash_t: "👑 لوحة تحكم زوار الوطن العربي والأدمن",
-        phone_modal_h: "📱 التسجيل برقم الهاتف",
-        phone_modal_p: "أدخل رقم هاتفك ليصلك رمز التفعيل وتنضم إلى مملكة طيكيل:",
-        login_google: "التسجيل بجوجل",
-        login_phone: "رقم الهاتف",
-        logout: "خروج",
+        forum_title: "😈 منتدى ملك ملوك الجان للتوصيات المباشرة",
+        support_line: "للشكاوى والمقترحات تواصل معنا على بوت الدعم:",
+        admin_dash_t: "📊 لوحة تحكم زوار المنصة (الوطن العربي) - خاص بالأدمن",
         phases: {
             full: ["قمر مكتمل (Full Moon): طاقة فلكية قصوى وسحب سيولة ضخم جداً بالسوق! 💥", "سيولة عالية جداً 💥"],
             new: ["قمر جديد (New Moon): بداية دورة مالية وتدفق سيولة شرائية جديدة ونظيفة 🟢", "سيولة شرائية صاعدة 🟢"],
@@ -59,46 +61,36 @@ const data = {
         ]
     },
     en: {
-        title: "Forex & Currency Market Platform [FX TK04] $", 
-        sub: "Tykeel's Kingdom | Forex Analysis + Lunar Tracker + Free and Limited", 
+        title: "Forex & Currency Market Platform [FX TK04] $",
+        sub: "Tykeel's Kingdom | Forex Analysis + Lunar Tracker + Free and Limited",
         btn: "Summon Tykeel on Telegram Now",
-        m_title: "🪐 Celestial Tracking & Digital Calendar", 
+        m_title: "🪐 Celestial Tracking & Digital Calendar",
         news_title: "📰 Tykeel's High Impact Red News Feed",
-        wheel_t: "🎡 Cosmic Financial Alignment Wheel", 
+        wheel_t: "🎡 Cosmic Financial Alignment Wheel",
         wheel_s: "Rotate the wheel to align planets, sun, and moon with market liquidity tracks",
-        why_t: "😈 Why is TK04 Platform Different?", 
-        f1_t: "😈 Authentic Content Access", 
+        why_t: "😈 Why is TK04 Platform Different?",
+        f1_t: "😈 Authentic Content Access",
         f1_d: "We care about trust, not profit. We understand the trader's struggle amidst fake news and unreliable mentors.",
-        f2_t: "😈 With Tykeel: The King of Jinn", 
+        f2_t: "😈 With Tykeel: The King of Jinn",
         f2_d: "This is not standard AI. He is the mystical King of Jinn, a legendary entity with an unparalleled lore.",
-        f3_t: "😈 Secured Environment", 
+        f3_t: "😈 Secured Environment",
         f3_d: "We utilize smart analytical workflows and safe rules:",
         f3_l: "<li>Don't put all your eggs in one basket</li><li>Never risk your entire capital</li><li>Invest only 3% to sustain your consistency</li><li>Tykeel delivers forecasts that could be right or wrong</li>",
-        warn_t: "⚠️ Beta Platform & Limited Resources", 
-        warn_d: "Disclaimer: This platform holds no responsibility for your financial risks. Verify actual market prices.",
-        rec_t: "Signals & Market Analysis", 
-        rec_d1: "Free signals and real-time analysis straight from the market core.", 
+        warn_t: "⚠️ Beta Platform & Limited Resources",
+        warn_d: "Disclaimer: This platform holds no responsibility for your financial risks. Verify actual market prices. The astrological analysis shown is entertainment content, not financial advice.",
+        rec_t: "Signals & Market Analysis",
+        rec_d1: "Free signals and real-time analysis straight from the market core.",
         rec_d2: "Tykeel has strict usage thresholds but remains 100% free.",
-        soon_t: "Coming Soon with TK04", 
-        soon_s: "Live 24/7 Chat with Tykeel the King of Jinn", 
+        soon_t: "Coming Soon with TK04",
+        soon_s: "Live 24/7 Chat with Tykeel the King of Jinn",
         lbl: "Soon",
-        g1: "Daily, Weekly, and Monthly Signals", 
-        g2: "News Analysis & Breakdown", 
+        g1: "Daily, Weekly, and Monthly Signals",
+        g2: "News Analysis & Breakdown",
         g3: "Astrological & Numerical Systems",
         cr: "Eslam Al-Hashemi © All Rights Reserved 2026 | ESO 🚀",
         forum_title: "🔥 King Tykeel Live Signals Forum",
-        guest_notice_h: "Content Encrypted for Visitors!",
-        guest_notice_p: "Please sign in with Google or Phone Number to share signals and unlock live market feeds.",
-        publish_h: "✍️ Post New Market Signal / Technical Breakdown",
-        placeholder_post: "Write your forecast or setup here (e.g., EUR/USD Buy @ 1.0850)...",
-        upload_img_btn: "📷 Attach Chart Image",
-        submit_post: "🚀 Post Signal Now",
+        support_line: "For complaints & suggestions, reach us on our support bot:",
         admin_dash_t: "👑 Arab World Visitor & Admin Analytics",
-        phone_modal_h: "📱 Phone Number Authentication",
-        phone_modal_p: "Enter your phone number to receive verification code:",
-        login_google: "Google Login",
-        login_phone: "Phone Number",
-        logout: "Logout",
         phases: {
             full: ["Full Moon: Maximum celestial energy flowing. High liquidity surge! 💥", "Ultra High Liquidity 💥"],
             new: ["New Moon: Beginning of a new fiscal cycle, clean buying volumes flowing 🟢", "Rising Buying Liquidity 🟢"],
@@ -139,7 +131,7 @@ function toggleLanguage() {
     const htmlTag = document.getElementById('main-html');
     const langBtn = document.getElementById('lang-btn');
     let currentLang = htmlTag.getAttribute('lang') === 'ar' ? 'en' : 'ar';
-    
+
     htmlTag.setAttribute('lang', currentLang);
     htmlTag.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
     if (langBtn) langBtn.textContent = currentLang === 'ar' ? 'English' : 'العربية';
@@ -182,12 +174,14 @@ function toggleLanguage() {
     setSafeText('wheel-card-title', currentData.wheel_t);
     setSafeText('wheel-card-sub', currentData.wheel_s);
     setSafeText('forum-section-title', currentData.forum_title);
+    setSafeText('support-line', currentData.support_line);
+    setSafeText('admin-dash-title', currentData.admin_dash_t);
 
     document.querySelectorAll('.soon-lbl').forEach(el => el.textContent = currentData.lbl);
-    
+
     // إعادة رسم الحسابات التقويمية والمنتدى للغة الجديدة
     calculateMoonAndDate();
-    generateMoonCalendar(); 
+    generateMoonCalendar();
     const timeSlider = document.getElementById('time-slider');
     if (timeSlider) updateCosmicWheel(timeSlider.value);
     renderForum();
@@ -204,18 +198,18 @@ function calculateMoonAndDate() {
     const year = d.getFullYear();
     const htmlTag = document.getElementById('main-html');
     const currentLang = (htmlTag && htmlTag.getAttribute('lang')) || 'ar';
-    
+
     const numericDateEl = document.getElementById('numeric-date');
     if (numericDateEl) {
-        numericDateEl.textContent = currentLang === 'ar' ? 
-            `التاريخ الرقمي الفلكي: ${year}/${month}/${day}` : 
+        numericDateEl.textContent = currentLang === 'ar' ?
+            `التاريخ الرقمي الفلكي: ${year}/${month}/${day}` :
             `Celestial Digital Date: ${year}/${month}/${day}`;
     }
-    
+
     const shadowRender = document.getElementById('shadow-render');
     const phaseText = document.getElementById('moon-phase-text');
     const liqVal = document.getElementById('liquidity-val');
-    
+
     if (!shadowRender || !phaseText || !liqVal) return;
 
     if (day >= 13 && day <= 16) {
@@ -258,16 +252,16 @@ function updateCosmicWheel(val) {
     const statusText = document.getElementById('alignment-status');
     const htmlTag = document.getElementById('main-html');
     const currentLang = (htmlTag && htmlTag.getAttribute('lang')) || 'ar';
-    
+
     if (!wheel || !statusText) return;
 
     const rotationDegrees = val * 3.6;
     wheel.style.transform = `rotate(${rotationDegrees}deg)`;
-    
+
     document.querySelectorAll('.orbit-object').forEach(el => {
         el.style.transform = `rotate(${-rotationDegrees}deg)`;
     });
-    
+
     const alignmentIndex = Math.floor((val % 4));
     statusText.textContent = data[currentLang].alignments[alignmentIndex];
 }
@@ -279,9 +273,9 @@ function updateCosmicWheel(val) {
 function generateMoonCalendar() {
     const calendar = document.getElementById("moon-calendar");
     if (!calendar) return;
-    
+
     calendar.innerHTML = "";
-    
+
     const now = new Date();
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth();
@@ -296,7 +290,7 @@ function generateMoonCalendar() {
         if (i === today) {
             box.classList.add("today");
         }
-        
+
         if (i >= 13 && i <= 16) {
             box.classList.add("full-moon");
         } else if (i >= 27 || i <= 2) {
@@ -311,10 +305,12 @@ function generateMoonCalendar() {
 }
 
 /* ============================================================
-   # [🔐 جديد] إدارة تسجيل الدخول وتحديث واجهة الهيدر
+   # [🔐] إدارة تسجيل الدخول وتحديث واجهة الهيدر
    # [EN] User Authentication Engine & Profile Actions
    ============================================================ */
 function loginWithGoogle() {
+    // ⚠️ حالياً بيانات تجريبية محلية فقط. لتفعيل تسجيل دخول حقيقي بجوجل
+    // اربط هنا Supabase Auth (supabaseClient.auth.signInWithOAuth) بعد ما تحط مفاتيحك فوق.
     currentUser = {
         name: "متداول طيكيل الملكي",
         email: "trader@eso-code.com",
@@ -325,17 +321,18 @@ function loginWithGoogle() {
 }
 
 function openPhoneModal() {
-    const modal = document.getElementById('phone-auth-modal');
+    const modal = document.getElementById('phone-modal');
     if (modal) modal.style.display = 'flex';
 }
 
 function closePhoneModal() {
-    const modal = document.getElementById('phone-auth-modal');
+    const modal = document.getElementById('phone-modal');
     if (modal) modal.style.display = 'none';
 }
 
-function submitPhoneAuth() {
-    const phoneInput = document.getElementById('phone-input-field');
+function handlePhoneSubmit(event) {
+    event.preventDefault();
+    const phoneInput = document.getElementById('user-phone-input');
     if (phoneInput && phoneInput.value.trim().length >= 8) {
         currentUser = {
             name: `عضو (${phoneInput.value.slice(-4)})`,
@@ -343,10 +340,11 @@ function submitPhoneAuth() {
             type: "Phone",
             badge: "عضو موثق 📱"
         };
+        phoneInput.value = '';
         closePhoneModal();
         updateAuthUI();
     } else {
-        alert("يرجى إدخال رقم هاتف صحيح مع الرمز الدولي!");
+        alert("يرجى إدخال رقم هاتف صحيح!");
     }
 }
 
@@ -356,7 +354,7 @@ function logoutUser() {
 }
 
 function updateAuthUI() {
-    const authActions = document.getElementById('auth-header-actions');
+    const authActions = document.getElementById('auth-actions');
     if (!authActions) return;
 
     if (currentUser) {
@@ -381,22 +379,24 @@ function updateAuthUI() {
 }
 
 /* ============================================================
-   # [🔥 جديد] محرك المنتدى ورسم التوصيات وإضافة الصور
+   # [🔥] محرك المنتدى ورسم التوصيات وإضافة الصور
    # [EN] Live Signals Forum Engine & Render Methods
    ============================================================ */
 function renderForum() {
-    const forumContainer = document.getElementById('forum-posts-container');
-    const guestNotice = document.getElementById('guest-notice-container');
-    const publishBox = document.getElementById('publish-box-container');
+    const forumContainer = document.getElementById('forum-posts-list');
+    const guestNotice = document.getElementById('guest-forum-notice');
+    const publishBox = document.getElementById('logged-publish-box');
 
     if (!forumContainer) return;
 
     if (!currentUser) {
         if (guestNotice) guestNotice.style.display = 'block';
         if (publishBox) publishBox.style.display = 'none';
+        forumContainer.style.display = 'none';
     } else {
         if (guestNotice) guestNotice.style.display = 'none';
         if (publishBox) publishBox.style.display = 'block';
+        forumContainer.style.display = 'block';
     }
 
     forumContainer.innerHTML = '';
@@ -428,8 +428,8 @@ function renderForum() {
     });
 }
 
-function handleImagePreview(event) {
-    const previewContainer = document.getElementById('image-preview-container');
+function previewSelectedImage(event) {
+    const previewContainer = document.getElementById('image-preview');
     if (!previewContainer) return;
 
     const file = event.target.files[0];
@@ -443,14 +443,16 @@ function handleImagePreview(event) {
     }
 }
 
-function addNewPost() {
+function submitNewPost(event) {
+    event.preventDefault();
+
     if (!currentUser) {
         alert("عذراً! يجب تسجيل الدخول لتمكن من نشر التوصيات.");
         return;
     }
 
-    const postInput = document.getElementById('new-post-text');
-    const previewContainer = document.getElementById('image-preview-container');
+    const postInput = document.getElementById('post-text');
+    const previewContainer = document.getElementById('image-preview');
     const attachedImage = previewContainer ? previewContainer.getAttribute('data-base64') : null;
 
     if (!postInput || postInput.value.trim() === '') {
@@ -487,16 +489,19 @@ function toggleLike(postId, btnElement) {
 }
 
 /* ============================================================
-   # [🛡️ جديد] نظام الحماية المطلقة لمنع نسخ المحتوى وأدوات التطوير
-   # [EN] Content Protection & Anti-DevTools Security System
+   # [🛡️] نظام حماية بسيط ضد النسخ العرضي (غير مانع بشكل كامل)
+   # [EN] Basic Content Interaction Guards (not a real security layer)
    ============================================================ */
 function setupSecurityProtections() {
-    // 1. حظر زر الفأرة الأيمن (Prevent Right Click)
+    // ملحوظة: هذه الطبقة لا تمنع الوصول الحقيقي لأدوات المطور،
+    // وهي فقط تقلل النسخ العرضي غير المقصود من الزوار العاديين.
+
+    // 1. حظر زر الفأرة الأيمن
     document.addEventListener('contextmenu', (e) => {
         e.preventDefault();
     });
 
-    // 2. حظر اختصارات لوحة المفاتيح الخاصة بالفحص (Prevent DevTools Shortcuts)
+    // 2. حظر اختصارات لوحة المفاتيح الخاصة بالفحص
     document.addEventListener('keydown', (e) => {
         if (
             e.key === 'F12' ||
@@ -523,7 +528,7 @@ function setupSecurityProtections() {
 window.addEventListener('DOMContentLoaded', () => {
     calculateMoonAndDate();
     generateMoonCalendar();
-    
+
     const timeSlider = document.getElementById('time-slider');
     if (timeSlider) {
         updateCosmicWheel(timeSlider.value);
@@ -533,6 +538,6 @@ window.addEventListener('DOMContentLoaded', () => {
     // إعداد المنتدى والمصادقة
     updateAuthUI();
 
-    // تفعيل أنظمة الحماية الأسطورية
+    // تفعيل أنظمة الحماية
     setupSecurityProtections();
 });
