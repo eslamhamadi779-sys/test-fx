@@ -22,6 +22,7 @@
     --neon-blue: #66fcf1;
     --danger-red: #ff4d4d;
     --teal-color: #2b7a78;
+    --telegram-blue: #0088cc;
     --font-ar: 'Cairo', sans-serif;
 }
 
@@ -38,8 +39,8 @@ body {
     overflow-x: hidden;
 }
 
-html[dir="ltr"] { 
-    --font-ar: 'Montserrat', sans-serif; 
+html[dir="ltr"] {
+    --font-ar: 'Montserrat', sans-serif;
 }
 
 /* ============================================================
@@ -58,10 +59,10 @@ header {
     flex-wrap: wrap;
 }
 
-.logo { 
-    font-size: 1.5rem; 
-    font-weight: 900; 
-    color: var(--text-gold); 
+.logo {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--text-gold);
 }
 
 /* أزرار التسجيل في الهيدر */
@@ -69,6 +70,7 @@ header {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .auth-btn {
@@ -137,14 +139,14 @@ header {
     transition: 0.3s;
 }
 
-.lang-btn:hover { 
-    background-color: var(--text-gold); 
-    color: var(--bg-color); 
+.lang-btn:hover {
+    background-color: var(--text-gold);
+    color: var(--bg-color);
 }
 
 /* ============================================================
-   # [AR] واجهة الهيرو الرئيسية وأزرار تلجرام التفاعلية المزدوجة
-   # [EN] Hero Landing Section & Telegram Dual CTA Interactive Buttons
+   # [AR] واجهة الهيرو الرئيسية وأزرار تلجرام التفاعلية
+   # [EN] Hero Landing Section & Telegram CTA Interactive Buttons
    ============================================================ */
 #hero {
     display: flex;
@@ -156,22 +158,22 @@ header {
     padding: 40px 20px;
 }
 
-.hero-title { 
-    font-size: 2.3rem; 
-    font-weight: 900; 
-    margin-bottom: 20px; 
-    text-shadow: 0 0 15px rgba(0,0,0,0.8); 
+.hero-title {
+    font-size: 2.3rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    text-shadow: 0 0 15px rgba(0,0,0,0.8);
 }
 
-.hero-magic { 
-    color: var(--text-gold); 
+.hero-magic {
+    color: var(--text-gold);
 }
 
-.hero-sub { 
-    font-size: 1.3rem; 
-    color: #a4b3b6; 
-    margin-bottom: 30px; 
-    text-shadow: 0 0 10px rgba(0,0,0,0.8); 
+.hero-sub {
+    font-size: 1.3rem;
+    color: #a4b3b6;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px rgba(0,0,0,0.8);
 }
 
 .hero-buttons-container {
@@ -197,9 +199,9 @@ header {
     display: inline-block;
 }
 
-#hero-telegram-btn:hover { 
-    transform: translateY(-3px); 
-    box-shadow: 0 6px 25px rgba(0, 136, 204, 0.7); 
+#hero-telegram-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(0, 136, 204, 0.7);
 }
 
 #hero-channel-btn {
@@ -217,9 +219,30 @@ header {
     display: inline-block;
 }
 
-#hero-channel-btn:hover { 
-    transform: translateY(-3px); 
-    box-shadow: 0 6px 25px rgba(197, 168, 128, 0.7); 
+#hero-channel-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(197, 168, 128, 0.7);
+}
+
+/* زرار بوت Tk07 الجديد */
+#hero-tk07-btn {
+    background: linear-gradient(45deg, #2b7a78, #66fcf1);
+    color: #0b0c10;
+    border: none;
+    padding: 15px 35px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(102, 252, 241, 0.4);
+    transition: 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+#hero-tk07-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(102, 252, 241, 0.7);
 }
 
 /* ============================================================
@@ -292,11 +315,11 @@ header {
     margin-top: 10px;
 }
 
-.date-display { 
-    font-size: 1.1rem; 
-    color: var(--text-gold); 
-    font-weight: bold; 
-    margin-top: 5px; 
+.date-display {
+    font-size: 1.1rem;
+    color: var(--text-gold);
+    font-weight: bold;
+    margin-top: 5px;
 }
 
 .moon-calendar {
@@ -343,10 +366,10 @@ header {
    # [AR] عجلة الاقتران الكوني التفاعلية
    # [EN] Cosmic Planetary Wheel Engine
    ============================================================ */
-.cosmic-container { 
-    width: 100%; 
-    text-align: center; 
-    padding: 10px; 
+.cosmic-container {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
 }
 
 .cosmic-wheel {
@@ -365,14 +388,14 @@ header {
     box-shadow: 0 0 8px #66fcf1;
 }
 
-.orbit-object { 
-    position: absolute; 
-    border-radius: 50%; 
-    font-size: 1.1rem; 
-    width: 24px; 
-    height: 24px; 
-    display: flex; 
-    align-items: center; 
+.orbit-object {
+    position: absolute;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
     justify-content: center;
 }
 
@@ -393,7 +416,7 @@ header {
 }
 
 /* ============================================================
-   # [🔥 جديد] منتدى ملك ملوك الجان للتوصيات والتفاعلات
+   # [🔥] منتدى ملك ملوك الجان للتوصيات والتفاعلات
    # [EN] King Tykeel Recommendation Forum & Post Cards
    ============================================================ */
 .forum-section {
@@ -539,6 +562,11 @@ header {
     background: #1e5a58;
 }
 
+/* قائمة التوصيات المنشورة */
+.posts-list {
+    margin-top: 10px;
+}
+
 /* كروت التوصيات والمنشورات */
 .post-card {
     background: var(--container-bg);
@@ -621,7 +649,7 @@ header {
 }
 
 /* ============================================================
-   # [👑 جديد] لوحة تحكم زوار الوطن العربي والأدمن
+   # [👑] لوحة تحكم زوار الوطن العربي والأدمن
    # [EN] Admin Dashboard & Analytics Styling
    ============================================================ */
 .admin-dashboard-section {
@@ -666,7 +694,7 @@ header {
 }
 
 /* ============================================================
-   # [📱 جديد] نافذة تسجيل الدخول برقم الهاتف (Modal Popup)
+   # [📱] نافذة تسجيل الدخول برقم الهاتف (Modal Popup)
    # [EN] Modal Overlay & Form Dialogs
    ============================================================ */
 .modal-overlay {
@@ -784,9 +812,9 @@ h2, h3 { color: var(--text-gold); }
     border-radius: 8px; border-left: 4px solid var(--text-gold);
 }
 
-html[dir="ltr"] .grid-3 div, html[dir="ltr"] .gift-card { 
-    border-left: none; 
-    border-right: 4px solid var(--text-gold); 
+html[dir="ltr"] .grid-3 div, html[dir="ltr"] .gift-card {
+    border-left: none;
+    border-right: 4px solid var(--text-gold);
 }
 
 /* ============================================================
@@ -798,33 +826,65 @@ footer {
     border-top: 2px solid var(--container-bg);
 }
 
-.footer-symbols { 
-    font-size: 1.2rem; 
-    color: var(--text-gold); 
-    letter-spacing: 5px; 
-    margin-bottom: 20px; 
+.footer-symbols {
+    font-size: 1.2rem;
+    color: var(--text-gold);
+    letter-spacing: 5px;
+    margin-bottom: 20px;
 }
 
-.footer-links { 
-    display: flex; 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    gap: 15px; 
-    margin-bottom: 25px; 
+/* كارت بوت الشكاوى والمقترحات */
+.footer-support {
+    margin-bottom: 25px;
 }
 
-.footer-links a { 
-    color: #a4b3b6; 
-    text-decoration: none; 
-    font-size: 0.9rem; 
-    transition: 0.3s; 
-    display: flex; 
-    align-items: center; 
-    gap: 5px; 
+.footer-support p {
+    color: #a4b3b6;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
 }
 
-.footer-links a:hover { 
-    color: var(--neon-blue); 
+.support-bot-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 136, 204, 0.15);
+    color: var(--telegram-blue);
+    border: 1px solid var(--telegram-blue);
+    padding: 8px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.support-bot-link:hover {
+    background: var(--telegram-blue);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(0, 136, 204, 0.6);
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.footer-links a {
+    color: #a4b3b6;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.footer-links a:hover {
+    color: var(--neon-blue);
 }
 
 /* ============================================================
@@ -841,7 +901,7 @@ footer {
         flex-direction: column;
         align-items: center;
     }
-    #hero-telegram-btn, #hero-channel-btn {
+    #hero-telegram-btn, #hero-channel-btn, #hero-tk07-btn {
         width: 100%;
         max-width: 320px;
         text-align: center;
