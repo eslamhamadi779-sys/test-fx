@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" id="main-html">
 <head>
@@ -17,21 +16,17 @@
     <meta name="author" content="ESO Company, إسلام الهاشمي">
 
     <!-- استدعاء ملف التنسيقات الموحد -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 
-    <!--
-        🔑 [Supabase] — لتفعيل الاتصال الحقيقي بقاعدة البيانات والمصادقة:
-        1) فك التعليق عن السطر التالي.
-        2) حط رابط ومفتاح مشروعك في أول ملف script.js (SUPABASE_URL / SUPABASE_ANON_KEY).
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    -->
+    <!-- 🔑 [Supabase] مكتبة الاتصال بقاعدة البيانات والمصادقة -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
 <!-- الهيدر العلوي: الشعار، التسجيل وزر تحويل اللغة -->
 <header>
     <div class="logo">FX TK04</div>
-        <div id="phone-modal" class="modal-overlay" style="display: none;">
+    <div class="auth-header-actions" id="auth-actions">
         <!-- يظهر هذا الكارت في حالة عدم تسجّيل الدخول -->
         <button class="auth-btn google-btn" onclick="loginWithGoogle()"><i class="fab fa-google"></i> دخول بجوجل</button>
     </div>
@@ -156,7 +151,7 @@
     <div id="guest-forum-notice" class="guest-notice-card">
         <i class="fas fa-lock lock-icon"></i>
         <h3>أنت متصفح الآن في وضع الزائر</h3>
-        <p>يمكنك التصفح العام ورؤية الأسعار الخفيفة. لمراجعة تاريخ التوصيات كاملة أو نشر توصيات جديدة يرجى تسجيل الدخول مجاناً عبر جوجل أو رقم الهاتف.</p>
+        <p>يمكنك التصفح العام ورؤية الأسعار الخفيفة. لمراجعة تاريخ التوصيات كاملة أو نشر توصيات جديدة يرجى تسجيل الدخول مجاناً عبر جوجل.</p>
         <button class="action-btn" onclick="loginWithGoogle()"><i class="fab fa-google"></i> تسجيل الدخول فوراً</button>
     </div>
 
@@ -165,8 +160,6 @@
         <h3><i class="fas fa-edit"></i> إضافة توصية / تحليل جديد</h3>
         <form id="post-recommendation-form" onsubmit="submitNewPost(event)">
             <textarea id="post-text" placeholder="اكتب تحليلك أو التوصية هنا (مثال: EUR/USD شراء من مستويات 1.0850...)" required></textarea>
-
-
 
             <button type="submit" class="submit-post-btn"><i class="fas fa-paper-plane"></i> نشر التوصية الآن</button>
         </form>
@@ -280,13 +273,6 @@
     </div>
     <p id="footer-cr">إسلام الهاشمي © جميع الحقوق محفوظة 2026 | ESO 🚀</p>
 </footer>
-
-<!-- ============================================================ -->
-<!-- 📱 نافذة تسجيل الدخول برقم الهاتف (Modal) -->
-<!-- ============================================================ -->
-
-
-
 
 <!-- ربط ملفات الجافا سكريبت -->
 <script src="script.js"></script>
