@@ -111,17 +111,7 @@ const data = {
    # [EN] App State Management & Authentication Flags
    ============================================================ */
 let currentUser = null;
-let forumPosts = [
-    {
-        id: 1,
-        author: "طيكيل ملك الجان 👑",
-        text: "⚡ توصية فلكية خاصة: زوج EUR/USD يقترب من منطقة دعم رئيسية عند 1.0820 مع اكتمال القوة القمرية، ترقبوا صعوداً بحجم سيولة مرتفع.",
-        image: "https://i.postimg.cc/fyfYP5LN/2385aef2-576c-4c3e-b299-412e7edd6d48.jpg",
-        likes: 12,
-        views: 145,
-        time: "منذ ساعتين"
-    }
-];
+let forumPosts = [];
 
 /* ============================================================
    # [AR] دالة تحويل اللغة والتزامن لكل الأجزاء المضافة
@@ -305,52 +295,35 @@ function generateMoonCalendar() {
 }
 
 /* ============================================================
-   # [🔐] إدارة تسجيل الدخول وتحديث واجهة الهيدر
-   # [EN] User Authentication Engine & Profile Actions
+   # [🔐] إدارة تسجيل الدخول وتحديث واجهة الهيدر (جوجل فقط)
+   # [EN] Google-Only Authentication Engine & Profile Actions
    ============================================================ */
-function loginWithGoogle() {
-    // ⚠️ حالياً بيانات تجريبية محلية فقط. لتفعيل تسجيل دخول حقيقي بجوجل
-    // اربط هنا Supabase Auth (supabaseClient.auth.signInWithOAuth) بعد ما تحط مفاتيحك فوق.
-    currentUser = {
-        name: "متداول طيكيل الملكي",
-        email: "trader@eso-code.com",
+function mapSupabaseUser(session) {
+    if (!session || !session.user) return null;
+    const u = session.user;
+    return {
+        name: (u.user_metadata && u.user_metadata.full_name) || u.email || "عضو",
+        email: u.email,
         type: "Google",
         badge: "عضو ذهبي 👑"
     };
-    updateAuthUI();
 }
 
-function openPhoneModal() {
-    const modal = document.getElementById('phone-modal');
-    if (modal) modal.style.display = 'flex';
-}
-
-function closePhoneModal() {
-    const modal = document.getElementById('phone-modal');
-    if (modal) modal.style.display = 'none';
-}
-
-function handlePhoneSubmit(event) {
-    event.preventDefault();
-    const phoneInput = document.getElementById('user-phone-input');
-    if (phoneInput && phoneInput.value.trim().length >= 8) {
-        currentUser = {
-            name: `عضو (${phoneInput.value.slice(-4)})`,
-            phone: phoneInput.value.trim(),
-            type: "Phone",
-            badge: "عضو موثق 📱"
-        };
-        phoneInput.value = '';
-        closePhoneModal();
-        updateAuthUI();
-    } else {
-        alert("يرجى إدخال رقم هاتف صحيح!");
+async function loginWithGoogle() {
+    if (!supabaseClient) {
+        alert("لسه المشروع مش متصل بقاعدة البيانات. تأكد من إضافة المفاتيح في أول الملف.");
+        return;
     }
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin }
+    });
+    if (error) alert("حصل خطأ في تسجيل الدخول: " + error.message);
 }
 
-function logoutUser() {
-    currentUser = null;
-    updateAuthUI();
+async function logoutUser() {
+    if (!supabaseClient) return;
+    await supabaseClient.auth.signOut();
 }
 
 function updateAuthUI() {
@@ -360,8 +333,8 @@ function updateAuthUI() {
     if (currentUser) {
         authActions.innerHTML = `
             <div class="user-badge">
-                <span>${currentUser.badge}</span>
-                <span>${currentUser.name}</span>
+                <span>${escapeHTML(currentUser.badge)}</span>
+                <span>${escapeHTML(currentUser.name)}</span>
                 <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         `;
@@ -370,18 +343,40 @@ function updateAuthUI() {
             <button class="auth-btn google-btn" onclick="loginWithGoogle()">
                 <i class="fab fa-google"></i> <span>جوجل</span>
             </button>
-            <button class="auth-btn phone-btn" onclick="openPhoneModal()">
-                <i class="fas fa-phone-alt"></i> <span>الهاتف</span>
-            </button>
         `;
     }
     renderForum();
 }
 
 /* ============================================================
-   # [🔥] محرك المنتدى ورسم التوصيات وإضافة الصور
-   # [EN] Live Signals Forum Engine & Render Methods
+   # [🛡️] دالة تنظيف النصوص لمنع ثغرات XSS
+   # [EN] HTML Escaping Utility to Prevent XSS Injection
    ============================================================ */
+function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+}
+
+/* ============================================================
+   # [🔥] محرك المنتدى ورسم التوصيات (متصل بقاعدة البيانات)
+   # [EN] Live Signals Forum Engine & Supabase-Backed Rendering
+   ============================================================ */
+async function loadPosts() {
+    if (!supabaseClient) return;
+    const { data: rows, error } = await supabaseClient
+        .from('forum_posts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+    if (error) {
+        console.error(error);
+        return;
+    }
+    forumPosts = rows;
+    renderForum();
+}
+
 function renderForum() {
     const forumContainer = document.getElementById('forum-posts-list');
     const guestNotice = document.getElementById('guest-forum-notice');
@@ -406,15 +401,14 @@ function renderForum() {
         postCard.innerHTML = `
             <div class="post-author">
                 <div class="author-info">
-                    <div class="author-avatar">${post.author.charAt(0)}</div>
+                    <div class="author-avatar">${escapeHTML(post.author_name.charAt(0))}</div>
                     <div>
-                        <strong>${post.author}</strong>
-                        <div style="font-size:0.75rem; color:#a4b3b6;">${post.time}</div>
+                        <strong>${escapeHTML(post.author_name)}</strong>
+                        <div style="font-size:0.75rem; color:#a4b3b6;">${new Date(post.created_at).toLocaleString('ar-EG')}</div>
                     </div>
                 </div>
             </div>
-            <div class="post-body">${post.text}</div>
-            ${post.image ? `<img src="${post.image}" class="post-attached-image" alt="شارت التوصية" />` : ''}
+            <div class="post-body">${escapeHTML(post.post_text)}</div>
             <div class="post-footer-actions">
                 <button class="like-btn" onclick="toggleLike(${post.id}, this)">
                     <i class="fas fa-heart"></i> <span>${post.likes}</span>
@@ -428,64 +422,52 @@ function renderForum() {
     });
 }
 
-function previewSelectedImage(event) {
-    const previewContainer = document.getElementById('image-preview');
-    if (!previewContainer) return;
-
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            previewContainer.innerHTML = `<img src="${e.target.result}" alt="معاينة الصورة" />`;
-            previewContainer.setAttribute('data-base64', e.target.result);
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-function submitNewPost(event) {
+async function submitNewPost(event) {
     event.preventDefault();
 
-    if (!currentUser) {
+    if (!currentUser || !supabaseClient) {
         alert("عذراً! يجب تسجيل الدخول لتمكن من نشر التوصيات.");
         return;
     }
 
     const postInput = document.getElementById('post-text');
-    const previewContainer = document.getElementById('image-preview');
-    const attachedImage = previewContainer ? previewContainer.getAttribute('data-base64') : null;
-
     if (!postInput || postInput.value.trim() === '') {
         alert("يرجى كتابة نص التوصية أو التحليل قبل النشر!");
         return;
     }
 
-    const newPost = {
-        id: Date.now(),
-        author: `${currentUser.name} ${currentUser.badge}`,
-        text: postInput.value.trim(),
-        image: attachedImage || null,
-        likes: 0,
-        views: 1,
-        time: "الآن"
-    };
-
-    forumPosts.unshift(newPost);
-    postInput.value = '';
-    if (previewContainer) {
-        previewContainer.innerHTML = '';
-        previewContainer.removeAttribute('data-base64');
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+        alert("حصل خطأ في التحقق من هويتك، حاول تسجل الدخول تاني.");
+        return;
     }
-    renderForum();
+
+    const { error } = await supabaseClient.from('forum_posts').insert({
+        user_id: user.id,
+        author_name: `${currentUser.name} ${currentUser.badge}`,
+        post_text: postInput.value.trim()
+    });
+
+    if (error) {
+        alert("حصل خطأ في النشر: " + error.message);
+        return;
+    }
+
+    postInput.value = '';
+    await loadPosts();
 }
 
-function toggleLike(postId, btnElement) {
-    const post = forumPosts.find(p => p.id === postId);
-    if (post) {
-        post.likes += 1;
-        btnElement.querySelector('span').textContent = post.likes;
-        btnElement.classList.add('active');
+async function toggleLike(postId, btnElement) {
+    if (!currentUser || !supabaseClient) {
+        alert("لازم تسجل الدخول عشان تعمل لايك");
+        return;
     }
+    const { error } = await supabaseClient.rpc('toggle_like', { p_post_id: postId });
+    if (error) {
+        alert("حصل خطأ: " + error.message);
+        return;
+    }
+    await loadPosts();
 }
 
 /* ============================================================
@@ -525,7 +507,7 @@ function setupSecurityProtections() {
    # [🚀] التشغيل الموحد والتلقائي فور التحميل الكامل للمستند
    # [EN] Global Initialization Handler
    ============================================================ */
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
     calculateMoonAndDate();
     generateMoonCalendar();
 
@@ -535,7 +517,19 @@ window.addEventListener('DOMContentLoaded', () => {
         timeSlider.addEventListener('input', (e) => updateCosmicWheel(e.target.value));
     }
 
-    // إعداد المنتدى والمصادقة
+    // إعداد المصادقة والمنتدى المتصلين بـ Supabase
+    if (supabaseClient) {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        currentUser = mapSupabaseUser(session);
+
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            currentUser = mapSupabaseUser(session);
+            updateAuthUI();
+        });
+
+        await loadPosts();
+    }
+
     updateAuthUI();
 
     // تفعيل أنظمة الحماية
