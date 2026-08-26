@@ -310,6 +310,7 @@ function mapSupabaseUser(session) {
     };
 }
 
+
 async function loginWithGoogle() {
     if (!supabaseClient) {
         alert("لسه المشروع مش متصل بقاعدة البيانات. تأكد من إضافة المفاتيح في أول الملف.");
@@ -317,7 +318,9 @@ async function loginWithGoogle() {
     }
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin }
+        options: {
+            redirectTo: 'https://eslamhamadi779-sys.github.io/test-fx/'
+        }
     });
     if (error) alert("حصل خطأ في تسجيل الدخول: " + error.message);
 }
