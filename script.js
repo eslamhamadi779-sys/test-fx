@@ -10,8 +10,6 @@ if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
-
-
 /* ============================================================
    # [AR] مصفوفة البيانات والترجمة الشاملة لجميع اللغات والواجهات
    # [EN] Complete Multi-Language i18n & Interface Translation Dictionary
@@ -303,6 +301,7 @@ function mapSupabaseUser(session) {
     if (!session || !session.user) return null;
     const u = session.user;
     return {
+        id: u.id,
         name: (u.user_metadata && u.user_metadata.full_name) || u.email || "عضو",
         email: u.email,
         type: "Google",
@@ -412,8 +411,17 @@ function renderForum() {
                     </div>
                 </div>
             </div>
+
+
             <div class="post-body">${escapeHTML(post.post_text)}</div>
+            ${currentUser && post.user_id === currentUser.id ? `
+            <div class="post-owner-actions" style="display:flex; gap:10px; margin-bottom:10px;">
+                <button onclick="editPost(${post.id}, '${escapeHTML(post.post_text).replace(/'/g, "\\'")}')" style="background:transparent;border:1px solid var(--neon-blue);color:var(--neon-blue);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:0.8rem;">✏️ تعديل</button>
+                <button onclick="deletePost(${post.id})" style="background:transparent;border:1px solid var(--danger-red);color:var(--danger-red);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:0.8rem;">🗑️ حذف</button>
+            </div>` : ''}
             <div class="post-footer-actions">
+
+
                 <button class="like-btn" onclick="toggleLike(${post.id}, this)">
                     <i class="fas fa-heart"></i> <span>${post.likes}</span>
                 </button>
@@ -446,10 +454,14 @@ async function submitNewPost(event) {
         return;
     }
 
+
+
+    const randomViews = Math.floor(Math.random() * (190 - 100 + 1)) + 100;
     const { error } = await supabaseClient.from('forum_posts').insert({
         user_id: user.id,
         author_name: `${currentUser.name} ${currentUser.badge}`,
-        post_text: postInput.value.trim()
+        post_text: postInput.value.trim(),
+        views: randomViews
     });
 
     if (error) {
@@ -473,6 +485,39 @@ async function toggleLike(postId, btnElement) {
     }
     await loadPosts();
 }
+
+
+/* ============================================================
+   # deletePost
+   #  
+   ============================================================ */
+
+
+async function deletePost(postId) {
+    if (!confirm("متأكد إنك عايز تمسح المنشور ده؟")) return;
+    const { error } = await supabaseClient.from('forum_posts').delete().eq('id', postId);
+    if (error) {
+        alert("حصل خطأ في الحذف: " + error.message);
+        return;
+    }
+    await loadPosts();
+}
+
+async function editPost(postId, oldText) {
+    const newText = prompt("عدّل نص التوصية:", oldText);
+    if (newText === null || newText.trim() === '') return;
+    const { error } = await supabaseClient
+        .from('forum_posts')
+        .update({ post_text: newText.trim() })
+        .eq('id', postId);
+    if (error) {
+        alert("حصل خطأ في التعديل: " + error.message);
+        return;
+    }
+    await loadPosts();
+}
+
+
 
 /* ============================================================
    # [🛡️] نظام حماية بسيط ضد النسخ العرضي (غير مانع بشكل كامل)
