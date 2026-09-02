@@ -46,6 +46,10 @@ const data = {
         forum_title: "😈 منتدى ملك ملوك الجان للتوصيات المباشرة",
         support_line: "للشكاوى والمقترحات تواصل معنا على بوت الدعم:",
         admin_dash_t: "📊 لوحة تحكم زوار المنصة (الوطن العربي) - خاص بالأدمن",
+        comments_lbl: "التعليقات",
+        add_comment_ph: "اكتب تعليقك هنا...",
+        send_comment_btn: "إرسال",
+        banned_msg: "عذراً، حسابك محظور من النشر والتفاعل على هذه المنصة.",
         phases: {
             full: ["قمر مكتمل (Full Moon): طاقة فلكية قصوى وسحب سيولة ضخم جداً بالسوق! 💥", "سيولة عالية جداً 💥"],
             new: ["قمر جديد (New Moon): بداية دورة مالية وتدفق سيولة شرائية جديدة ونظيفة 🟢", "سيولة شرائية صاعدة 🟢"],
@@ -90,6 +94,10 @@ const data = {
         forum_title: "🔥 King Tykeel Live Signals Forum",
         support_line: "For complaints & suggestions, reach us on our support bot:",
         admin_dash_t: "👑 Arab World Visitor & Admin Analytics",
+        comments_lbl: "Comments",
+        add_comment_ph: "Write your comment...",
+        send_comment_btn: "Send",
+        banned_msg: "Sorry, your account is banned from posting and interacting on this platform.",
         phases: {
             full: ["Full Moon: Maximum celestial energy flowing. High liquidity surge! 💥", "Ultra High Liquidity 💥"],
             new: ["New Moon: Beginning of a new fiscal cycle, clean buying volumes flowing 🟢", "Rising Buying Liquidity 🟢"],
@@ -106,11 +114,14 @@ const data = {
 };
 
 /* ============================================================
-   # [AR] متغيرات حالة المستخدم والمنشورات الحالية
+   # [AR] متغيرات حالة المستخدم والمنشورات والتعليقات الحالية
    # [EN] App State Management & Authentication Flags
    ============================================================ */
 let currentUser = null;
 let forumPosts = [];
+let commentsByPost = {};      // { postId: [comment, comment, ...] }
+let openCommentSections = new Set(); // أي بوستات فاتح تعليقاتها دلوقتي
+let viewedPostsThisSession = new Set(); // منع تسجيل مشاهدة نفس البوست أكتر من مرة في نفس الجلسة
 
 /* ============================================================
    # [AR] دالة تحويل اللغة والتزامن لكل الأجزاء المضافة
@@ -127,7 +138,6 @@ function toggleLanguage() {
 
     const currentData = data[currentLang];
 
-    // تحديث العناوين المترجمة الأساسية
     const setSafeText = (id, value, isHTML = false) => {
         const el = document.getElementById(id);
         if (el) {
@@ -168,7 +178,6 @@ function toggleLanguage() {
 
     document.querySelectorAll('.soon-lbl').forEach(el => el.textContent = currentData.lbl);
 
-    // إعادة رسم الحسابات التقويمية والمنتدى للغة الجديدة
     calculateMoonAndDate();
     generateMoonCalendar();
     const timeSlider = document.getElementById('time-slider');
@@ -202,20 +211,17 @@ function calculateMoonAndDate() {
     if (!shadowRender || !phaseText || !liqVal) return;
 
     if (day >= 13 && day <= 16) {
-        // بدر مكتمل - Full Moon
         shadowRender.style.transform = "translateX(100%)";
         phaseText.textContent = data[currentLang].phases.full[0];
         liqVal.textContent = data[currentLang].phases.full[1];
         liqVal.style.color = "#66fcf1";
     } else if (day >= 27 || day <= 2) {
-        // قمر مظلم / محاق - Dark Moon
         shadowRender.style.transform = "translateX(0)";
         shadowRender.style.left = "0";
         phaseText.textContent = data[currentLang].phases.dark[0];
         liqVal.textContent = data[currentLang].phases.dark[1];
         liqVal.style.color = "#ff4d4d";
     } else if (day > 2 && day < 13) {
-        // قمر جديد صاعد - New / Waxing Moon
         shadowRender.style.transform = "translateX(50%)";
         shadowRender.style.left = "initial";
         shadowRender.style.right = "0";
@@ -223,7 +229,6 @@ function calculateMoonAndDate() {
         liqVal.textContent = data[currentLang].phases.new[1];
         liqVal.style.color = "#66fcf1";
     } else {
-        // أطوار متوازنة - Balanced
         shadowRender.style.transform = "translateX(30%)";
         shadowRender.style.left = "0";
         phaseText.textContent = data[currentLang].phases.balance[0];
@@ -305,10 +310,10 @@ function mapSupabaseUser(session) {
         name: (u.user_metadata && u.user_metadata.full_name) || u.email || "عضو",
         email: u.email,
         type: "Google",
-        badge: "عضو ذهبي 👑"
+        badge: "عضو ذهبي 👑",
+        isAdmin: false // هيتحدد فعليًا من السيرفر في checkAdminStatus()
     };
 }
-
 
 async function loginWithGoogle() {
     if (!supabaseClient) {
@@ -329,15 +334,30 @@ async function logoutUser() {
     await supabaseClient.auth.signOut();
 }
 
+/* ------------------------------------------------------------
+   # [👑] التحقق من صلاحية الأدمن من السيرفر (مش مجرد مقارنة إيميل في الفرونت)
+   # هنا بننادي دالة fx_is_admin() اللي فعليًا بتتحقق في قاعدة البيانات
+   ------------------------------------------------------------ */
+async function checkAdminStatus() {
+    if (!currentUser || !supabaseClient) return;
+    const { data: isAdmin, error } = await supabaseClient.rpc('fx_is_admin');
+    if (error) {
+        console.error('فشل التحقق من صلاحية الأدمن:', error);
+        return;
+    }
+    currentUser.isAdmin = !!isAdmin;
+}
+
 function updateAuthUI() {
     const authActions = document.getElementById('auth-actions');
     if (!authActions) return;
 
     if (currentUser) {
+        const adminTag = currentUser.isAdmin ? ' <span style="color:var(--danger-red);">(أدمن)</span>' : '';
         authActions.innerHTML = `
             <div class="user-badge">
                 <span>${escapeHTML(currentUser.badge)}</span>
-                <span>${escapeHTML(currentUser.name)}</span>
+                <span>${escapeHTML(currentUser.name)}${adminTag}</span>
                 <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         `;
@@ -361,6 +381,19 @@ function escapeHTML(str) {
     return div.innerHTML;
 }
 
+/* ------------------------------------------------------------
+   # [🛡️] ترجمة رسائل خطأ Supabase الشائعة لرسالة مفهومة للمستخدم
+   #      (مثلاً لو حد محظور حاول ينشر، الحماية الحقيقية في RLS
+   #       والرسالة دي بس بتوضحلّه سبب الرفض)
+   ------------------------------------------------------------ */
+function friendlyErrorMessage(error) {
+    const msg = (error && error.message) || '';
+    if (msg.includes('row-level security') || error?.code === '42501') {
+        return data[(document.getElementById('main-html').getAttribute('lang')) || 'ar'].banned_msg;
+    }
+    return msg || 'حصل خطأ غير متوقع';
+}
+
 /* ============================================================
    # [🔥] محرك المنتدى ورسم التوصيات (متصل بقاعدة البيانات)
    # [EN] Live Signals Forum Engine & Supabase-Backed Rendering
@@ -377,7 +410,50 @@ async function loadPosts() {
         return;
     }
     forumPosts = rows;
+    await loadComments();
     renderForum();
+    registerVisibleViews();
+}
+
+/* ------------------------------------------------------------
+   # [💬] تحميل كل التعليقات وتجميعها حسب رقم البوست
+   ------------------------------------------------------------ */
+async function loadComments() {
+    if (!supabaseClient || forumPosts.length === 0) {
+        commentsByPost = {};
+        return;
+    }
+    const postIds = forumPosts.map(p => p.id);
+    const { data: rows, error } = await supabaseClient
+        .from('fx_comments')
+        .select('*')
+        .in('post_id', postIds)
+        .order('created_at', { ascending: true });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    commentsByPost = {};
+    rows.forEach(c => {
+        if (!commentsByPost[c.post_id]) commentsByPost[c.post_id] = [];
+        commentsByPost[c.post_id].push(c);
+    });
+}
+
+/* ------------------------------------------------------------
+   # [👁️] تسجيل مشاهدة حقيقية لكل بوست ظاهر، مرة واحدة بس في الجلسة
+   ------------------------------------------------------------ */
+async function registerVisibleViews() {
+    if (!currentUser || !supabaseClient) return;
+    for (const post of forumPosts) {
+        if (viewedPostsThisSession.has(post.id)) continue;
+        viewedPostsThisSession.add(post.id);
+        supabaseClient.rpc('fx_register_view', { p_post_id: post.id }).then(({ error }) => {
+            if (error) console.error('فشل تسجيل المشاهدة:', error);
+        });
+    }
 }
 
 function renderForum() {
@@ -391,6 +467,7 @@ function renderForum() {
         if (guestNotice) guestNotice.style.display = 'block';
         if (publishBox) publishBox.style.display = 'none';
         forumContainer.style.display = 'none';
+        return;
     } else {
         if (guestNotice) guestNotice.style.display = 'none';
         if (publishBox) publishBox.style.display = 'block';
@@ -401,6 +478,13 @@ function renderForum() {
     forumPosts.forEach(post => {
         const postCard = document.createElement('div');
         postCard.className = 'post-card';
+
+        const canManagePost = currentUser && (post.user_id === currentUser.id || currentUser.isAdmin);
+        const showAdminBan = currentUser && currentUser.isAdmin && post.user_id !== currentUser.id;
+        const showViews = post.views > 10;
+        const postComments = commentsByPost[post.id] || [];
+        const commentsOpen = openCommentSections.has(post.id);
+
         postCard.innerHTML = `
             <div class="post-author">
                 <div class="author-info">
@@ -412,26 +496,76 @@ function renderForum() {
                 </div>
             </div>
 
-
             <div class="post-body">${escapeHTML(post.post_text)}</div>
-            ${currentUser && post.user_id === currentUser.id ? `
-            <div class="post-owner-actions" style="display:flex; gap:10px; margin-bottom:10px;">
+
+            ${canManagePost ? `
+            <div class="post-owner-actions" style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
                 <button onclick="editPost(${post.id}, '${escapeHTML(post.post_text).replace(/'/g, "\\'")}')" style="background:transparent;border:1px solid var(--neon-blue);color:var(--neon-blue);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:0.8rem;">✏️ تعديل</button>
                 <button onclick="deletePost(${post.id})" style="background:transparent;border:1px solid var(--danger-red);color:var(--danger-red);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:0.8rem;">🗑️ حذف</button>
             </div>` : ''}
+
+            ${showAdminBan ? `
+            <div class="post-admin-actions" style="display:flex; gap:10px; margin-bottom:10px;">
+                <button onclick="adminBanUser('${post.user_id}', '${escapeHTML(post.author_name).replace(/'/g, "\\'")}')" style="background:transparent;border:1px solid var(--danger-red);color:var(--danger-red);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:0.8rem;">🚫 حظر الناشر</button>
+            </div>` : ''}
+
             <div class="post-footer-actions">
-
-
                 <button class="like-btn" onclick="toggleLike(${post.id}, this)">
                     <i class="fas fa-heart"></i> <span>${post.likes}</span>
                 </button>
+                <button class="comment-btn" onclick="toggleCommentsSection(${post.id})">
+                    <i class="fas fa-comment"></i> <span>${postComments.length}</span>
+                </button>
+                ${showViews ? `
                 <div class="views-badge">
                     <i class="fas fa-eye"></i> ${post.views} مشاهدة
+                </div>` : ''}
+            </div>
+
+            <div class="comments-section" id="comments-section-${post.id}" style="display:${commentsOpen ? 'block' : 'none'}; margin-top:15px; border-top:1px solid rgba(255,255,255,0.05); padding-top:12px;">
+                <div class="comments-list" id="comments-list-${post.id}">
+                    ${postComments.map(c => renderCommentHTML(c)).join('')}
                 </div>
+                ${currentUser ? `
+                <form onsubmit="submitComment(event, ${post.id})" style="display:flex; gap:8px; margin-top:10px;">
+                    <input type="text" id="comment-input-${post.id}" placeholder="اكتب تعليقك هنا..." maxlength="500" required
+                        style="flex:1; background:#0b0c10; border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:8px 12px; color:#fff; font-family:var(--font-ar);">
+                    <button type="submit" style="background:var(--teal-color); color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer;">إرسال</button>
+                </form>` : ''}
             </div>
         `;
         forumContainer.appendChild(postCard);
     });
+}
+
+/* ------------------------------------------------------------
+   # [💬] بناء الـ HTML بتاع تعليق واحد (مع أزرار تعديل/حذف لو ليك صلاحية)
+   ------------------------------------------------------------ */
+function renderCommentHTML(comment) {
+    const canManage = currentUser && (comment.user_id === currentUser.id || currentUser.isAdmin);
+    return `
+        <div class="comment-item" style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.9rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="color:var(--text-gold);">${escapeHTML(comment.author_name)}</strong>
+                <span style="font-size:0.7rem; color:#a4b3b6;">${new Date(comment.created_at).toLocaleString('ar-EG')}</span>
+            </div>
+            <div style="margin-top:4px; color:#e0e0e0;">${escapeHTML(comment.comment_text)}</div>
+            ${canManage ? `
+            <div style="margin-top:6px; display:flex; gap:10px;">
+                <button onclick="editComment(${comment.id}, ${comment.post_id}, '${escapeHTML(comment.comment_text).replace(/'/g, "\\'")}')" style="background:none;border:none;color:var(--neon-blue);cursor:pointer;font-size:0.75rem;">✏️ تعديل</button>
+                <button onclick="deleteComment(${comment.id}, ${comment.post_id})" style="background:none;border:none;color:var(--danger-red);cursor:pointer;font-size:0.75rem;">🗑️ حذف</button>
+            </div>` : ''}
+        </div>
+    `;
+}
+
+function toggleCommentsSection(postId) {
+    if (openCommentSections.has(postId)) {
+        openCommentSections.delete(postId);
+    } else {
+        openCommentSections.add(postId);
+    }
+    renderForum();
 }
 
 async function submitNewPost(event) {
@@ -454,18 +588,15 @@ async function submitNewPost(event) {
         return;
     }
 
-
-
-    const randomViews = Math.floor(Math.random() * (190 - 100 + 1)) + 100;
     const { error } = await supabaseClient.from('forum_posts').insert({
         user_id: user.id,
         author_name: `${currentUser.name} ${currentUser.badge}`,
-        post_text: postInput.value.trim(),
-        views: randomViews
+        post_text: postInput.value.trim()
+        // ملحوظة: شيلنا الـ views العشوائية، العداد بيتحدث بس من fx_register_view الحقيقية
     });
 
     if (error) {
-        alert("حصل خطأ في النشر: " + error.message);
+        alert(friendlyErrorMessage(error));
         return;
     }
 
@@ -480,24 +611,17 @@ async function toggleLike(postId, btnElement) {
     }
     const { error } = await supabaseClient.rpc('toggle_like', { p_post_id: postId });
     if (error) {
-        alert("حصل خطأ: " + error.message);
+        alert(friendlyErrorMessage(error));
         return;
     }
     await loadPosts();
 }
 
-
-/* ============================================================
-   # deletePost
-   #  
-   ============================================================ */
-
-
 async function deletePost(postId) {
     if (!confirm("متأكد إنك عايز تمسح المنشور ده؟")) return;
     const { error } = await supabaseClient.from('forum_posts').delete().eq('id', postId);
     if (error) {
-        alert("حصل خطأ في الحذف: " + error.message);
+        alert("حصل خطأ في الحذف: " + friendlyErrorMessage(error));
         return;
     }
     await loadPosts();
@@ -511,28 +635,102 @@ async function editPost(postId, oldText) {
         .update({ post_text: newText.trim() })
         .eq('id', postId);
     if (error) {
-        alert("حصل خطأ في التعديل: " + error.message);
+        alert("حصل خطأ في التعديل: " + friendlyErrorMessage(error));
         return;
     }
     await loadPosts();
 }
 
+/* ------------------------------------------------------------
+   # [💬] إضافة / تعديل / حذف تعليق
+   ------------------------------------------------------------ */
+async function submitComment(event, postId) {
+    event.preventDefault();
+    if (!currentUser || !supabaseClient) return;
 
+    const input = document.getElementById(`comment-input-${postId}`);
+    if (!input || input.value.trim() === '') return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabaseClient.from('fx_comments').insert({
+        post_id: postId,
+        user_id: user.id,
+        author_name: `${currentUser.name} ${currentUser.badge}`,
+        comment_text: input.value.trim()
+    });
+
+    if (error) {
+        alert(friendlyErrorMessage(error));
+        return;
+    }
+
+    input.value = '';
+    openCommentSections.add(postId); // نسيب سكشن التعليقات مفتوح بعد الإرسال
+    await loadComments();
+    renderForum();
+}
+
+async function editComment(commentId, postId, oldText) {
+    const newText = prompt("عدّل نص التعليق:", oldText);
+    if (newText === null || newText.trim() === '') return;
+    const { error } = await supabaseClient
+        .from('fx_comments')
+        .update({ comment_text: newText.trim() })
+        .eq('id', commentId);
+    if (error) {
+        alert("حصل خطأ في التعديل: " + friendlyErrorMessage(error));
+        return;
+    }
+    await loadComments();
+    renderForum();
+}
+
+async function deleteComment(commentId, postId) {
+    if (!confirm("متأكد إنك عايز تمسح التعليق ده؟")) return;
+    const { error } = await supabaseClient
+        .from('fx_comments')
+        .delete()
+        .eq('id', commentId);
+    if (error) {
+        alert("حصل خطأ في الحذف: " + friendlyErrorMessage(error));
+        return;
+    }
+    await loadComments();
+    renderForum();
+}
+
+/* ------------------------------------------------------------
+   # [👑] حظر مستخدم (أدمن بس، الحماية الفعلية جوه دالة fx_ban_user في السيرفر)
+   ------------------------------------------------------------ */
+async function adminBanUser(userId, authorName) {
+    if (!currentUser || !currentUser.isAdmin) return;
+    const reason = prompt(`سبب حظر "${authorName}" (اختياري):`, "");
+    if (reason === null) return; // المستخدم عمل إلغاء
+
+    const { error } = await supabaseClient.rpc('fx_ban_user', {
+        p_user_id: userId,
+        p_reason: reason.trim() || null
+    });
+
+    if (error) {
+        alert("حصل خطأ في الحظر: " + friendlyErrorMessage(error));
+        return;
+    }
+
+    alert(`تم حظر "${authorName}" بنجاح.`);
+}
 
 /* ============================================================
    # [🛡️] نظام حماية بسيط ضد النسخ العرضي (غير مانع بشكل كامل)
    # [EN] Basic Content Interaction Guards (not a real security layer)
    ============================================================ */
 function setupSecurityProtections() {
-    // ملحوظة: هذه الطبقة لا تمنع الوصول الحقيقي لأدوات المطور،
-    // وهي فقط تقلل النسخ العرضي غير المقصود من الزوار العاديين.
-
-    // 1. حظر زر الفأرة الأيمن
     document.addEventListener('contextmenu', (e) => {
         e.preventDefault();
     });
 
-    // 2. حظر اختصارات لوحة المفاتيح الخاصة بالفحص
     document.addEventListener('keydown', (e) => {
         if (
             e.key === 'F12' ||
@@ -544,7 +742,6 @@ function setupSecurityProtections() {
         }
     });
 
-    // 3. منع سحب وتنزيل الصور بالماوس
     document.addEventListener('dragstart', (e) => {
         if (e.target.tagName === 'IMG') {
             e.preventDefault();
@@ -566,13 +763,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         timeSlider.addEventListener('input', (e) => updateCosmicWheel(e.target.value));
     }
 
-    // إعداد المصادقة والمنتدى المتصلين بـ Supabase
     if (supabaseClient) {
         const { data: { session } } = await supabaseClient.auth.getSession();
         currentUser = mapSupabaseUser(session);
+        if (currentUser) await checkAdminStatus();
 
-        supabaseClient.auth.onAuthStateChange((event, session) => {
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
             currentUser = mapSupabaseUser(session);
+            if (currentUser) await checkAdminStatus();
             updateAuthUI();
         });
 
@@ -580,7 +778,5 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     updateAuthUI();
-
-    // تفعيل أنظمة الحماية
     setupSecurityProtections();
 });
